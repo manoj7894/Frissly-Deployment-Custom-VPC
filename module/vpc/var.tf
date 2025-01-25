@@ -2,7 +2,7 @@ variable "vpc_id" {
   description = "value of vpc_id"
 }
 
-variable "public_subnet_01" {
+variable "public_subnet_id_value" {
     description = "value for the subnet_id"
 }
 
@@ -10,7 +10,7 @@ variable "availability_zone" {
     description = "availablity_zone name"
 }
 
-variable "public_subnet_02" {
+variable "private_subnet_id_value" {
     description = "value for the subnet_id"
 }
 

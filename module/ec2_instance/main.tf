@@ -2,7 +2,7 @@
 resource "aws_instance" "Ec2_instance_1" {
   ami                         = var.ami_value           # Change to your desired AMI ID
   instance_type               = var.instance_type_value # Change to your desired instance type
-  subnet_id                   = var.public_subnet_01
+  subnet_id                   = var.public_subnet_id_value
   associate_public_ip_address = var.associate_public_ip_address
   key_name                    = aws_key_pair.key_pair.key_name # Change to your key pair name
   availability_zone           = var.availability_zone

@@ -89,7 +89,7 @@ resource "aws_vpc_endpoint" "ecr_vpc_endpoint" {
   vpc_id            = var.vpc_id  # Replace with your VPC ID
   service_name      = "com.amazonaws.${data.aws_region.current.name}.ecr.dkr"  # Correct reference to current region
   vpc_endpoint_type = "Interface"
-  subnet_ids        = [var.public_subnet_01, var.public_subnet_02]  # Subnets where the VPC endpoint will be placed
+  subnet_ids        = [var.public_subnet_id_value, var.private_subnet_id_value]  # Subnets where the VPC endpoint will be placed
   security_group_ids = [var.security_group_id]  # Security Group for the VPC Endpoint
 
   private_dns_enabled = true

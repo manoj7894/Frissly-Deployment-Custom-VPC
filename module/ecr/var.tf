@@ -19,11 +19,11 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "public_subnet_01" {
+variable "public_subnet_id_value" {
     description = "value for the subnet_id"
 }
 
-variable "public_subnet_02" {
+variable "private_subnet_id_value" {
     description = "value for the subnet_id"
 }
 

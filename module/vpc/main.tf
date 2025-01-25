@@ -9,26 +9,26 @@ resource "aws_vpc" "vpc" {
     }
 }
 
-resource "aws_subnet" "public_01" {
+resource "aws_subnet" "Public" {
   vpc_id            = aws_vpc.vpc.id  # Replace with your VPC ID
-  cidr_block        = var.public_subnet_01   # Replace with your desired CIDR block
+  cidr_block        = var.public_subnet_id_value   # Replace with your desired CIDR block
   availability_zone = var.availability_zone # Replace with your desired Availability Zone
   map_public_ip_on_launch = var.map_public_ip_on_launch           # Enable auto-assign public IP
 
   # Optional: Assign tags to your subnets
   tags = {
-    Name = "Public Subnet-01"
+    Name = "Public Subnet"
   }
 }
 
-resource "aws_subnet" "public_02" {
+resource "aws_subnet" "Private" {
   vpc_id            = aws_vpc.vpc.id  # Replace with your VPC ID
-  cidr_block        = var.public_subnet_02  # Replace with your desired CIDR block
+  cidr_block        = var.private_subnet_id_value  # Replace with your desired CIDR block
   availability_zone = var.availability_zone1 # Replace with your desired Availability Zone
 
   # Optional: Assign tags to your subnets
   tags = {
-    Name = "Public Subnet-02"
+    Name = "Private Subnet"
   }
 }
 
@@ -38,6 +38,25 @@ resource "aws_internet_gateway" "igw" {
   # Optional: Assign tags to your Internet Gateway
   tags = {
     Name = "My Internet Gateway"
+  }
+}
+
+resource "aws_eip" "eip" {
+    domain = "vpc"
+
+  # Optional: Associate tags with the Elastic IP
+  tags = {
+    Name = "MyElasticIP"
+  }
+}
+
+resource "aws_nat_gateway" "ngw" {
+  allocation_id = aws_eip.eip.id
+  subnet_id     = aws_subnet.Public.id
+
+# Optional: Associate tags with the Elastic IP
+  tags = {
+    Name = "net-gateway"
   }
 }
 
@@ -55,12 +74,26 @@ resource "aws_route_table" "rt1" {
   }
 }
 
+resource "aws_route_table" "rt2" {
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_nat_gateway.ngw.id
+  }
+
+  # Optional: Assign tags to your route table
+  tags = {
+    Name = "MyRouteTable2"
+  }
+}
+
 resource "aws_route_table_association" "subnet1_association" {
-  subnet_id      = aws_subnet.public_01.id
+  subnet_id      = aws_subnet.Public.id
   route_table_id = aws_route_table.rt1.id
 }
 
 resource "aws_route_table_association" "subnet2_association" {
-  subnet_id      = aws_subnet.public_02.id
-  route_table_id = aws_route_table.rt1.id
+  subnet_id      = aws_subnet.Private.id
+  route_table_id = aws_route_table.rt2.id
 }

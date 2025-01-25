@@ -1,8 +1,83 @@
-# To create apprunner with Private ECR image
+# Create a security group
+resource "aws_security_group" "app_runner_security_group" {
+  name_prefix = var.security_group_name
+  description = "Example security group"
+  vpc_id      = var.vpc_id
 
+  # Define your security group rules as needed
+  # For example, allow SSH and HTTP traffic
+  ingress {
+    description = "ssh access"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTP access"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    description = "HTTPs access"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow HTTP access (port 8080) for Jenkins web interface
+  ingress {
+    description = "jenkins access"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    # Allow HTTP access (port 8080) for Jenkins web interface
+  ingress {
+    description = "AppRunner access"
+    from_port   = 8081
+    to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow HTTP access (port 8080) for Jenkins web interface
+  ingress {
+    description = "sonarqube access"
+    from_port   = 9000
+    to_port     = 9000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # outgoing traffic
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_apprunner_vpc_connector" "vpc_connector" {
+  vpc_connector_name = "vpc_connector"
+  subnets            = [var.private_subnet_id_value]
+  security_groups    = [aws_security_group.app_runner_security_group.id]
+}
+
+
+
+# To create apprunner with Private ECR image
 # Define the IAM role
 resource "aws_iam_role" "apprunner_service_role" {
-  name = "MyAppRunnerServiceRole"
+  name = var.role_name
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -25,7 +100,7 @@ resource "time_sleep" "waitrolecreate" {
 
 # Define the IAM policy
 resource "aws_iam_policy" "apprunner_policy" {
-  name        = "apprunner-policy"
+  name        = var.policy_name
   description = "IAM policy for AWS App Runner service with ECR, CloudWatch Logs, and Secrets Manager permissions"
 
   policy = jsonencode({
@@ -131,6 +206,13 @@ resource "aws_apprunner_service" "backend" {
     healthy_threshold   = var.healthy_threshold
     unhealthy_threshold = var.unhealthy_threshold
     protocol            = var.protocol           # Give TCP or HTTP no problem
+  }
+
+  network_configuration {
+    egress_configuration {
+      egress_type       = "VPC"
+      vpc_connector_arn = aws_apprunner_vpc_connector.vpc_connector.arn
+    }
   }
 
    # Associate the Auto Scaling Configuration
