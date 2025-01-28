@@ -7,10 +7,10 @@ module "vpc" {
   enable_dns_support      = "true" # If set to true, DNS queries can be resolved within the VPC (e.g., for instances to communicate using private DNS names).
   enable_dns_hostnames    = "true" # If set to true, instances with public IPs will also receive public DNS hostnames
   public_subnet_id_value  = "172.0.1.0/24"
-  availability_zone       = "ap-south-1a"
+  availability_zone       = "us-east-2a"
   map_public_ip_on_launch = "true" # Enable auto-assign public IP
   private_subnet_id_value = "172.0.2.0/24"
-  availability_zone1      = "ap-south-1b"
+  availability_zone1      = "us-east-2b"
 }
 
 
@@ -19,13 +19,13 @@ module "ec2" {
   source = "./module/ec2_instance"
 
   # Pass variables to EC2 module
-  ami_value                   = "ami-053b12d3152c0cc71" # data.aws_ami.ubuntu_24_arm.id                            
+  ami_value                   = "ami-0cb91c7de36eed2cb" # data.aws_ami.ubuntu_24_arm.id                            
   instance_type_value         = "t2.large"
   key_name                    = "varma.pem"
   instance_count              = "1"
   public_subnet_id_value      = module.vpc.Public_subnet_id
   associate_public_ip_address = "true" # Enable a public IP
-  availability_zone           = "ap-south-1a"
+  availability_zone           = "us-east-2a"
   vpc_id                      = module.vpc.vpc_id
   # instance_tenancy       = "dedicated"
   volume_size         = "30"
@@ -72,6 +72,18 @@ module "app_runner_backend" {
   security_group_name             = "Apprunner_Security_group"
 }
 
+module "SNS_EventBridge" {
+  source = "./module/sns"
+
+  sns_name                     = "SNS_APP_Topic_1"
+  display_name                 = "SNS_APPrunner"
+  protocol                     = "email"
+  endpoint                     = "manojvarmapotthutri@gmail.com"
+  eventbridge_name             = "Apprunner_Bridge_SNS"
+  eventbridge_to_sns_role_name = "EventBridgeToSNSRole"
+  sns_publish_policy_name      = "SNSPublishPolicy"
+}
+
 
 
 resource "null_resource" "name" {
@@ -106,3 +118,4 @@ resource "null_resource" "name" {
 
   depends_on = [module.ec2]
 }
+
