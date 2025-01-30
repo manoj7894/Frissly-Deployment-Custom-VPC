@@ -23,9 +23,9 @@
 
 terraform {
   backend "s3" {
-    bucket  = "terraform-east-2"
+    bucket  = "3003-terraform-west2"
     key     = "terraform.tfstate"
-    region  = "us-east-2" # Replace with your AWS region
+    region  = "us-west-2" # Replace with your AWS region
     encrypt = true
     # Optionally specify the DynamoDB table for state locking
     # dynamodb_table = "<YOUR_DYNAMODB_TABLE_NAME>"

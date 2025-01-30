@@ -18,15 +18,10 @@ resource "aws_cloudwatch_event_rule" "app_runner_event_rule" {
   name        = var.eventbridge_name
   description = "Triggers on App Runner deployment success or failure"
   event_pattern = jsonencode({
-    "source": ["aws.apprunner"],
-    "detail-type": ["AppRunner Service Operation Status Change"],
-    "detail": {
-      "operationStatus": [
-        "DeploymentCompletedSuccessfully",
-        "DeploymentFailed",
-        "DeploymentStarted",
-        "DeploymentCompleted"
-      ]
+    source      = ["aws.apprunner"]
+    "detail-type" = ["AppRunner Service Operation Status Change"]
+    detail = {
+      operationStatus = ["DeploymentCompletedSuccessfully", "DeploymentFailed"]
     }
   })
 }

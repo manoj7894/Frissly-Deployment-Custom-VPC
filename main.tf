@@ -7,10 +7,10 @@ module "vpc" {
   enable_dns_support      = "true" # If set to true, DNS queries can be resolved within the VPC (e.g., for instances to communicate using private DNS names).
   enable_dns_hostnames    = "true" # If set to true, instances with public IPs will also receive public DNS hostnames
   public_subnet_id_value  = "172.0.1.0/24"
-  availability_zone       = "us-east-2a"
+  availability_zone       = "us-west-2a"
   map_public_ip_on_launch = "true" # Enable auto-assign public IP
   private_subnet_id_value = "172.0.2.0/24"
-  availability_zone1      = "us-east-2b"
+  availability_zone1      = "us-west-2b"
 }
 
 
@@ -19,13 +19,13 @@ module "ec2" {
   source = "./module/ec2_instance"
 
   # Pass variables to EC2 module
-  ami_value                   = "ami-0cb91c7de36eed2cb" # data.aws_ami.ubuntu_24_arm.id                            
+  ami_value                   = "ami-00c257e12d6828491" # data.aws_ami.ubuntu_24_arm.id                            
   instance_type_value         = "t2.large"
   key_name                    = "varma.pem"
   instance_count              = "1"
   public_subnet_id_value      = module.vpc.Public_subnet_id
   associate_public_ip_address = "true" # Enable a public IP
-  availability_zone           = "us-east-2a"
+  availability_zone           = "us-west-2a"
   vpc_id                      = module.vpc.vpc_id
   # instance_tenancy       = "dedicated"
   volume_size         = "30"
@@ -38,11 +38,11 @@ module "ec2" {
 module "ecr" {
   source = "./module/ecr"
 
-  repository_name         = "frissly-docker-repo"
-  vpc_id                  = module.vpc.vpc_id
-  public_subnet_id_value  = module.vpc.Public_subnet_id
-  private_subnet_id_value = module.vpc.Private_subnet_id
-  security_group_id       = module.ec2.security_group_id
+  repository_name = "frissly-docker-repo"
+  # vpc_id                  = module.vpc.vpc_id
+  # public_subnet_id_value  = module.vpc.Public_subnet_id
+  # private_subnet_id_value = module.vpc.Private_subnet_id
+  # security_group_id       = module.ec2.security_group_id
 }
 
 module "app_runner_backend" {
@@ -68,6 +68,7 @@ module "app_runner_backend" {
   unhealthy_threshold             = "3"   # App Runner will mark the instance as unhealthy after 3 consecutive failed health checks.
   protocol                        = "TCP" # App Runner will check if the service instance is reachable on the specified port using a TCP connection. No HTTP requests are sent in this case.
   vpc_id                          = module.vpc.vpc_id
+  vpc_cidr_block                  = module.vpc.vpc_cidr_block
   private_subnet_id_value         = module.vpc.Private_subnet_id
   security_group_name             = "Apprunner_Security_group"
 }

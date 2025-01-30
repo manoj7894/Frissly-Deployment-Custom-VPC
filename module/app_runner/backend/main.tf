@@ -6,20 +6,13 @@ resource "aws_security_group" "app_runner_security_group" {
 
   # Define your security group rules as needed
   # For example, allow SSH and HTTP traffic
-  ingress {
-    description = "ssh access"
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["172.0.0.0/16"]
-  }
 
   ingress {
     description = "HTTP access"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["172.0.0.0/16"]
+    cidr_blocks = [var.vpc_cidr_block]
   }
 
   ingress {
@@ -27,34 +20,7 @@ resource "aws_security_group" "app_runner_security_group" {
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
-    cidr_blocks = ["172.0.0.0/16"]
-  }
-
-  # Allow HTTP access (port 8080) for Jenkins web interface
-  ingress {
-    description = "jenkins access"
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["172.0.0.0/16"]
-  }
-
-    # Allow HTTP access (port 8080) for Jenkins web interface
-  ingress {
-    description = "AppRunner access"
-    from_port   = 8081
-    to_port     = 8081
-    protocol    = "tcp"
-    cidr_blocks = ["172.0.0.0/16"]
-  }
-
-  # Allow HTTP access (port 8080) for Jenkins web interface
-  ingress {
-    description = "sonarqube access"
-    from_port   = 9000
-    to_port     = 9000
-    protocol    = "tcp"
-    cidr_blocks = ["172.0.0.0/16"]
+    cidr_blocks = [var.vpc_cidr_block]
   }
 
   # outgoing traffic

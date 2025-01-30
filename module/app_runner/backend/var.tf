@@ -92,3 +92,8 @@ variable "role_name" {
 variable "policy_name" {
   description = "give apprunner policy name"
 }
+
+variable "vpc_cidr_block" {
+  description = "The CIDR block of the VPC"
+  type        = string
+}
