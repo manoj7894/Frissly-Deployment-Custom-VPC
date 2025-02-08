@@ -100,12 +100,13 @@ sudo apt-get install -y curl unzip
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
 sudo ./aws/install
+
+
 # # Load environment variables from .env file
 # export $(grep -v '^#' .env | xargs)
 # echo "region = ${region}" >> /home/ubuntu/.aws/config
 # echo "aws_access_key_id = ${access_key}" >> /home/ubuntu/.aws/credentials
 # echo "aws_secret_access_key = ${secret_key}" >> /home/ubuntu/.aws/credentials
-
 
 
 # # Set up automatic updates for security patches

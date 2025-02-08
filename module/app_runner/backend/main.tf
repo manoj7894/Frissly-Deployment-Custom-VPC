@@ -151,7 +151,7 @@ resource "aws_apprunner_service" "backend" {
       image_configuration {
         port = var.port
       }
-      image_identifier = "${data.aws_ecr_repository.repo.repository_url}:latest" # Use the latest tag or replace with your tag
+      image_identifier = "${data.aws_ecr_repository.repo.repository_url}:${var.image_tag}" # Use the latest tag or replace with your tag
       image_repository_type = var.image_repository_type
     }
     auto_deployments_enabled = var.auto_deployments_enabled

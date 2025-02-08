@@ -2,14 +2,14 @@ module "vpc" {
   source = "./module/vpc"
 
   # Pass variables to VPC module
-  vpc_id                  = "172.0.0.0/16"
+  vpc_id                  = "172.16.0.0/16"
   instance_tenancy        = "default"
   enable_dns_support      = "true" # If set to true, DNS queries can be resolved within the VPC (e.g., for instances to communicate using private DNS names).
   enable_dns_hostnames    = "true" # If set to true, instances with public IPs will also receive public DNS hostnames
-  public_subnet_id_value  = "172.0.1.0/24"
+  public_subnet_id_value  = "172.16.1.0/24"
   availability_zone       = "us-west-2a"
   map_public_ip_on_launch = "true" # Enable auto-assign public IP
-  private_subnet_id_value = "172.0.2.0/24"
+  private_subnet_id_value = "172.16.2.0/24"
   availability_zone1      = "us-west-2b"
 }
 
@@ -50,7 +50,7 @@ module "app_runner_backend" {
 
   app_runner_service_name         = "Frissly-Backend"
   repository_name                 = "frissly-docker-repo" # Replace with your ECR repository name
-  image_tag                       = "latest"              # Replace with your specific tag if necessary
+  image_tag                       = "staging"             # Replace with your specific tag if necessary
   image_repository_type           = "ECR"
   auto_scaling_configuration_name = "Frissly-backend-autoscaling"
   role_name                       = "Frissly-Apprunner-Role-1"
